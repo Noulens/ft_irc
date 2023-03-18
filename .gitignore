@@ -1,3 +1,8 @@
+# Others
+.idea/
+.vscode/
+ircserv
+
 # Prerequisites
 *.d
 
