@@ -74,17 +74,17 @@ all:			$(NAME)
 $(BUILDIR)/%.o:	%.cpp | $(DEPDIR)
 				@mkdir -p build/ $(addprefix build/, $(SRCS_DIR))
 				@mkdir -p build/.deps/ $(addprefix build/.deps/, $(SRCS_DIR))
-				@printf "$(YELLOW)Compiling $@ and generating/checking make dependency file...$(DEFAULT)\n"
+				@printf "$(YELLOW)Compiling $(BLUE)$@$(DEFAULT)$(YELLOW) and generating/checking make dependency file...$(DEFAULT)\n"
 				$(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 				@printf '$(DELPREV)%-*s$(GREEN)$(CHECK)$(DEFAULT)\n' $(BODY_WIDTH) $(notdir $@)
 
 $(NAME):		$(OBJ)
-				@printf "$(YELLOW)Linking source files and generating $@ binary...\n$(DEFAULT)"
+				@printf "$(YELLOW)Linking source files and generating $(CYAN)$@$(DEFAULT) $(YELLOW)binary...\n$(DEFAULT)"
 				$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
 				@printf "$(DELPREV)$(GREEN)Binary generated$(DEFAULT)\n"
 
 $(DEPDIR):
-				@printf "$(YELLOW)Creating $@ folder...$(DEFAULT)\n"
+				@printf "$(YELLOW)Creating $(BLUE)$@$(DEFAULT)$(YELLOW) folder...$(DEFAULT)\n"
 				@mkdir -p $@
 				@printf "$(DELPREV)"
 $(DEP):
@@ -92,12 +92,12 @@ $(DEP):
 
 clean:
 				@printf "$(YELLOW)Deleting object and dependency files...$(DEFAULT)\n"
-				@$(RM) $(OBJ)
+				$(RM) $(OBJ)
 				@printf "$(DELPREV)Build files deleted\n"
 
 fclean:			clean
 				@printf "$(YELLOW)Deleting build directory...$(DEFAULT)\n"
-				@$(RM) $(BUILDIR) $(NAME)
+				$(RM) $(BUILDIR) $(NAME)
 				@printf "$(DELPREV)Build directory and binary deleted\n"
 
 re:				fclean
