@@ -23,6 +23,7 @@ int main(int argc, char **argv)
 	{
 		if (argc != 3)
 			throw std::runtime_error("Usage: ./ircserv <listening_port> <password>");
+		Server server(argv[1], argv[2]);
 	}
 	catch (std::exception &e)
 	{
