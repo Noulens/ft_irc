@@ -12,14 +12,20 @@
 
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include "colors.h"
 
 int main(int argc, char **argv)
 {
 	(void)argv;
-	if (argc != 3)
+	try
 	{
-		std::cout << RED "Usage: ./ircserv <listening_port> <password>" RESET << std::endl;
+		if (argc != 3)
+			throw std::runtime_error("Usage: ./ircserv <listening_port> <password>");
+	}
+	catch (std::exception &e)
+	{
+		std::cerr << RED << e.what() << RESET << std::endl;
 		return (1);
 	}
 	return 0;
