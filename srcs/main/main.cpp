@@ -14,6 +14,7 @@
 #include <string>
 #include <stdexcept>
 #include "colors.h"
+#include "Server.hpp"
 
 int main(int argc, char **argv)
 {

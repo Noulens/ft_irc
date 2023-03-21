@@ -18,6 +18,9 @@ SRC			=	$(addprefix srcs/,		\
 					$(addprefix main/,	\
 						main.cpp		\
 					)					\
+					$(addprefix server/,\
+						Server.cpp		\
+					)					\
 				)
 
 OBJ			=	$(SRC:%.cpp=$(BUILDIR)/%.o)
