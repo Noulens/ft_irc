@@ -14,71 +14,36 @@
 ## Variables ##
 ###############
 
-NAME		=	ircserv
-
+NAME		=	banbot
 ## add library here (minilibx, ncurses, libft, ...)
-LIBDIR		=
-
-INCLDIR		=	$(addsuffix /inc,$(LIBDIR) .)
+LIBDIR		=	temp/curl-8.0.1/lib/.libs/
+CURL_HEADER	=	./temp/curl-8.0.1/include/curl
+INCLDIR		=	$(addsuffix /inc,$(LIBDIR) .) $(CURL_HEADER)
 BUILDIR		=	build
 DEPDIR		=	$(BUILDIR)/.deps
-
 SRCS_DIR	=	$(sort $(dir $(wildcard src/*/)))
-
-SRC			=	$(addprefix src/,		\
-						main.cpp		\
-					$(addprefix channel/,\
-						Channel.cpp		\
-					)					\
-					$(addprefix client/,\
-						Client.cpp		\
-						getter.cpp		\
-						setter.cpp		\
-					)					\
-					$(addprefix commands/,\
-						join.cpp		\
-						kick.cpp		\
-						kill.cpp		\
-						list.cpp		\
-						mode.cpp		\
-						motd.cpp		\
-						names.cpp		\
-						nick.cpp		\
-						oper.cpp		\
-						pass.cpp		\
-						ping.cpp		\
-						private_msg.cpp	\
-						quit.cpp		\
-						restart.cpp		\
-						topic.cpp 		\
-						user.cpp		\
-						part.cpp		\
-						wallops.cpp		\
-						who.cpp			\
-						away.cpp		\
-					)					\
-					$(addprefix server/,\
-						chan_management.cpp\
-						connection.cpp	\
-						init_server.cpp	\
-						handle_input.cpp\
-						server_tools.cpp\
-						Server.cpp		\
-					)					\
-					$(addprefix tools/,	\
-   						Tools.cpp		\
-					)					\
+SRC			=	$(addprefix src/,			\
+						main.cpp			\
+						$(addprefix files/,	\
+                            Banbot.cpp		\
+                            Connection.cpp	\
+                            Parsing.cpp		\
+                            routine.cpp		\
+                        )					\
 				)
 
 OBJ			=	$(SRC:%.cpp=$(BUILDIR)/%.o)
 DEP			=	$(SRC:%.cpp=$(DEPDIR)/%.d)
-
 CXX			=	c++
 CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -g -O2
 CPPFLAGS	=	$(addprefix -I, $(INCLDIR))
-LDFLAGS		=
-DEPFLAGS	=	-MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+LDFLAGS		=	$(LIBDIR)libcurl.a \
+				-L/usr/lib -lz \
+				-L"$libssl_path" -lssl \
+				-L"$libcrypto_path" -lcrypto \
+				-L"$libbrotli_path" -lbrotlidec
 
+DEPFLAGS	=	-MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 RM			=	/bin/rm -rf
 
 # FG COLORS
@@ -120,12 +85,10 @@ BODY_WIDTH	=	$(shell printf "$$(($(HEAD_SIZE) - 1))")
 .PHONY:			all bonus clean fclean header lib re verbose
 
 all:
-				@$(MAKE) -s $(NAME)
-
-bonus:
-				$(info Building bot...)
-				@$(MAKE) -C ./bot
-				@$(MAKE) -s $(NAME)
+				$(info Running script.sh to install libcurl)
+				@sh ./script.sh
+				$(info Making bot)
+				@$(MAKE) -sk $(NAME)
 
 $(BUILDIR)/%.o:	%.cpp | $(DEPDIR)
 				@mkdir -p build/ $(addprefix build/, $(SRCS_DIR))
@@ -135,35 +98,30 @@ $(BUILDIR)/%.o:	%.cpp | $(DEPDIR)
 				@printf '$(DELPREV)%-*s$(GREEN)$(CHECK)$(DEFAULT)\n' $(BODY_WIDTH) $(notdir $@)
 
 $(NAME):		$(OBJ)
-				printf "$(YELLOW)Linking source files and generating $(CYAN)$@$(DEFAULT) $(YELLOW)binary...\n$(DEFAULT)"
+				@printf "$(YELLOW)Linking source files and generating $(CYAN)$@$(DEFAULT) $(YELLOW)binary...\n$(DEFAULT)"
 				$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
-				printf "$(DELPREV)$(GREEN)Binary generated$(DEFAULT)\n"
+				@printf "$(DELPREV)$(GREEN)Binary generated$(DEFAULT)\n"
 
 $(DEPDIR):
 				@printf "$(YELLOW)Creating $(BLUE)$@$(DEFAULT)$(YELLOW) folder...$(DEFAULT)\n"
-				mkdir -p $@
+				@mkdir -p $@
 				@printf "$(DELPREV)"
 $(DEP):
 -include $(wildcard $(DEP))
 
 clean:
-				@printf "$(YELLOW)BOT: Deleting object and dependency files...$(DEFAULT)\n"
-				$(MAKE) -C ./bot clean
 				@printf "$(YELLOW)Deleting object and dependency files...$(DEFAULT)\n"
 				$(RM) $(OBJ)
+				$(RM)
 				@printf "$(DELPREV)Build files deleted\n"
 
 fclean:			clean
-				@printf "$(YELLOW)BOT: Deleting build directory and binary...$(DEFAULT)\n"
-				$(MAKE) -C ./bot fclean
-				@printf "$(YELLOW)Deleting build directory and binary...$(DEFAULT)\n"
-				$(RM) $(BUILDIR) $(NAME)
+				@printf "$(YELLOW)Deleting build directory...$(DEFAULT)\n"
+				$(RM) $(BUILDIR) $(NAME) temp
+				$(RM) curl-8.0.1
 				@printf "$(DELPREV)Build directory and binary deleted\n"
 
 re:				fclean
 				@$(MAKE) -s all
-
-rebonus:		fclean
-				@$(MAKE) -s bonus
 
 
