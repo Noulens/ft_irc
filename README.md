@@ -9,6 +9,8 @@ The project had to be coded in **C++98**, however, we use the [libcurl](https://
 
 ##  Usage
 
+The reference client we used is **irssi**, so `/DCC` features like chat and file transfers are supported.
+
 Run `make` in the root of the projet and launch as follows:
 
     ./ircserv <port> <password>
